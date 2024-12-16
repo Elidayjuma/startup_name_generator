@@ -1,0 +1,220 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                Int                 @id @default(autoincrement())
+  email             String              @unique
+  password          String
+  name              String?
+  created_at        DateTime            @default(now())
+  updated_at        DateTime            @updatedAt
+  sites             Site[]
+  prompts           Prompts[]
+  subscriptions     Subscriptions[]
+  extraPrompts      ExtraPrompts[]
+  transactions      Transactions[]
+  PromptsUsage      PromptsUsage[]
+  ExtraPromptsUsage ExtraPromptsUsage[]
+
+  @@map("users")
+}
+
+model Site {
+  id           Int       @id @default(autoincrement())
+  site_name    String
+  wp_username  String
+  api_password String
+  site_url     String    @unique
+  site_bio     String
+  site_logo    String
+  site_favicon String
+  created_at   DateTime  @default(now())
+  updated_at   DateTime  @updatedAt
+  User         User      @relation(fields: [userId], references: [id])
+  userId       Int
+  prompts      Prompts[]
+
+  @@map("sites")
+}
+
+model Prompts {
+  id             Int      @id @default(autoincrement())
+  prompt_message String
+  tag_ids        String?
+  category_ids   String?
+  image_id       String?
+  status         Int      @default(0)
+  created_at     DateTime @default(now())
+  updated_at     DateTime @updatedAt
+  Site           Site     @relation(fields: [siteId], references: [id])
+  siteId         Int
+  User           User     @relation(fields: [userId], references: [id])
+  userId         Int
+
+  @@map("prompts")
+}
+
+model SubscriptionPackages {
+  id            Int                    @id @default(autoincrement())
+  name          String
+  price         Decimal
+  billingCycle  BillingCycle           @default(monthly)
+  created_at    DateTime               @default(now())
+  updated_at    DateTime               @updatedAt
+  features      SubscriptionFeatures[]
+  subscriptions Subscriptions[]
+
+  @@map("subscription_packages")
+}
+
+model PackageFeatures {
+  id                   Int                    @id @default(autoincrement())
+  name                 String
+  description          String?
+  created_at           DateTime               @default(now())
+  updated_at           DateTime               @updatedAt
+  subscriptionFeatures SubscriptionFeatures[]
+
+  @@map("package_features")
+}
+
+model SubscriptionFeatures {
+  id                    Int                  @id @default(autoincrement())
+  subscriptionPackageId Int
+  packageFeatureId      Int
+  featureLimit          Int
+  SubscriptionPackages  SubscriptionPackages @relation(fields: [subscriptionPackageId], references: [id])
+  PackageFeatures       PackageFeatures      @relation(fields: [packageFeatureId], references: [id])
+  created_at            DateTime             @default(now())
+
+  @@map("subscription_features")
+}
+
+model Subscriptions {
+  id                   Int                  @id @default(autoincrement())
+  userId               Int
+  packageId            Int
+  startDate            DateTime
+  endDate              DateTime
+  statusId             Int
+  monthlyUsage         Int                  @default(0)
+  User                 User                 @relation(fields: [userId], references: [id])
+  SubscriptionPackages SubscriptionPackages @relation(fields: [packageId], references: [id])
+  SubscriptionStatuses SubscriptionStatuses @relation(fields: [statusId], references: [id])
+  promptsUsage         PromptsUsage[]
+
+  @@map("subscriptions")
+}
+
+model SubscriptionStatuses {
+  id            Int             @id @default(autoincrement())
+  name          String
+  value         Int
+  created_at    DateTime        @default(now())
+  updated_at    DateTime        @updatedAt
+  subscriptions Subscriptions[]
+
+  @@map("subscription_statuses")
+}
+
+model PromptsUsage {
+  id             Int           @id @default(autoincrement())
+  userId         Int
+  subscriptionId Int
+  dateUsed       DateTime
+  User           User          @relation(fields: [userId], references: [id])
+  Subscriptions  Subscriptions @relation(fields: [subscriptionId], references: [id])
+
+  @@map("prompts_usage")
+}
+
+model ExtraPrompts {
+  id             Int                 @id @default(autoincrement())
+  userId         Int
+  quantity       Int
+  promptsUsed    Int                 @default(0)
+  pricePerPrompt Decimal
+  created_at     DateTime            @default(now())
+  User           User                @relation(fields: [userId], references: [id])
+  usage          ExtraPromptsUsage[]
+
+  @@map("extra_prompts")
+}
+
+model ExtraPromptsUsage {
+  id            Int          @id @default(autoincrement())
+  userId        Int
+  extraPromptId Int
+  dateUsed      DateTime
+  User          User         @relation(fields: [userId], references: [id])
+  ExtraPrompts  ExtraPrompts @relation(fields: [extraPromptId], references: [id])
+
+  @@map("extra_prompts_usage")
+}
+
+model Pricing {
+  id            Int         @id @default(autoincrement())
+  itemType      PricingItem @default(subscription)
+  itemId        Int?
+  price         Decimal
+  effectiveDate DateTime
+  created_at    DateTime    @default(now())
+
+  @@map("pricing")
+}
+
+model Transactions {
+  id              Int             @id @default(autoincrement())
+  userId          Int
+  transactionType TransactionType @default(debit)
+  amount          Decimal
+  description     String
+  relatedTable    RelatedTable?   @default(subscriptions)
+  relatedId       Int?
+  referenceId     String?
+  status          Status          @default(pending)
+  created_at      DateTime        @default(now())
+  User            User            @relation(fields: [userId], references: [id])
+
+  @@map("transactions")
+}
+
+// Define Prisma enums
+enum BillingCycle {
+  monthly
+  yearly
+}
+
+enum TransactionType {
+  debit
+  credit
+}
+
+enum RelatedTable {
+  subscriptions
+  extra_prompts
+  other
+}
+
+enum Status {
+  pending
+  successful
+  failed
+}
+
+enum PricingItem {
+  prompt
+  subscription
+}

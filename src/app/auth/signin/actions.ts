@@ -3,12 +3,8 @@
 import { z } from "zod";
 import { createSession, deleteSession } from "../../lib/session";
 import { redirect } from "next/navigation";
-
-const testUser = {
-  id: "1",
-  email: "contact@nenopresser.io",
-  password: "12345678",
-};
+import prisma from "@/lib/db";
+const bcrypt = require('bcrypt');
 
 const loginSchema = z.object({
   email: z.string().email({ message: "Invalid email address" }).trim(),
@@ -19,6 +15,19 @@ const loginSchema = z.object({
 });
 
 export async function login(prevState: any, formData: FormData) {
+
+  const testUser = await prisma.user.findUnique({
+    where: {
+        email: formData.get("email") as string
+    },
+  });
+
+  if (!testUser) {
+    return {
+      errors: { email: ["Invalid email or password"] },}}
+   
+
+  
   const result = loginSchema.safeParse(Object.fromEntries(formData));
 
   if (!result.success) {
@@ -28,9 +37,9 @@ export async function login(prevState: any, formData: FormData) {
   }
 
 
-  const { email, password } = result.data;
-
-  if (email !== testUser.email || password !== testUser.password) {
+  const { password } = result.data;
+  const comparison = await bcrypt.compare(password, testUser.password);
+  if ( !comparison) {
     return {
       errors: {
         email: ["Invalid email or password"],
@@ -40,7 +49,7 @@ export async function login(prevState: any, formData: FormData) {
 
   await createSession(testUser.id);
 
-  redirect("/dashboard");
+  redirect("/billing");
 }
 
 export async function logout() {

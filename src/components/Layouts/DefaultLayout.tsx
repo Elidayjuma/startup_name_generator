@@ -2,6 +2,7 @@
 import React, { useState, ReactNode } from "react";
 import Sidebar from "@/components/Sidebar";
 import Header from "@/components/Header";
+import { PopupWidget } from "@/components/LandingPage/PopupWidget";
 
 export default function DefaultLayout({
   children,
@@ -29,6 +30,7 @@ export default function DefaultLayout({
               {children}
             </div>
           </main>
+          <PopupWidget />
           {/* <!-- ===== Main Content End ===== --> */}
         </div>
         {/* <!-- ===== Content Area End ===== --> */}

@@ -2,7 +2,7 @@ import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 import { decrypt } from "./app/lib/session";
 
-const protectedRoutes = ["/dashboard"];
+const protectedRoutes = ["/dashboard","/billing","profile","prompts","prompts/add","sites","sites/add"];
 const publicRoutes = ["/auth/signin"];
 
 export default async function middleware(req: NextRequest) {
@@ -18,8 +18,15 @@ export default async function middleware(req: NextRequest) {
     }
 
     if (isPublicRoute && session?.userId) {
-        return NextResponse.redirect(new URL("/dashboard", req.nextUrl));
+        return NextResponse.redirect(new URL("/billing", req.nextUrl));
     }
 
     return NextResponse.next();
+}
+
+export async function session_data() {
+     const cookie = (await cookies()).get("session")?.value
+     const session_data = await decrypt(cookie)
+     return session_data
+
 }
