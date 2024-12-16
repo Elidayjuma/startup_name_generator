@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "prisma generate && next dev",
     "build": "prisma generate && next build",
-    "start": "next start",
+    "start": "next start -p 8415",
     "lint": "next lint",
     "migration:create": "prisma migrate dev --create-only",
     "migrate": "prisma migrate deploy",
