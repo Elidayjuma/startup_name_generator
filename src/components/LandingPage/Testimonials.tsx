@@ -29,7 +29,7 @@ export const Testimonials = () => {
                         <p className="text-2xl leading-normal ">
                             With NenoPress, I’ve taken my blog to the next level.
                             <Mark>The automatic content generation</Mark> and easy publishing have saved me so much time,
-                            letting me focus on growing my audience."
+                            letting me focus on growing my audience.
                         </p>
 
                         <Avatar
@@ -44,7 +44,7 @@ export const Testimonials = () => {
                         <p className="text-2xl leading-normal ">
                             NenoPress saved me hours every week.
                             Its <Mark>simple interface and content automation</Mark> took the stress out of blogging,
-                            allowing me to focus more on creativity!"
+                            allowing me to focus more on creativity!
                         </p>
 
                         <Avatar

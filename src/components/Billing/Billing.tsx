@@ -1,7 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
-// import ChartOne from "../Charts/ChartOne";
-// import ChartTwo from "../Charts/ChartTwo";
+import React, { useState, useEffect } from "react";
 import CardDataStats from "./BillingCard";
 import PricingTable from "@/components/LandingPage/PricingTable";
 import { returnUserPromptUsage } from "@/actions/actions";
@@ -87,11 +85,6 @@ const Billing: React.FC<BillingProps> = ({ subscription, usage_Data }) => {
         </CardDataStats>
       </div>
       <PricingTable subscription={subscription} />
-
-      {/* <div className="mt-4 grid grid-cols-12 gap-4 md:mt-6 md:gap-6 2xl:mt-7.5 2xl:gap-7.5">
-        <ChartOne />
-        <ChartTwo />
-      </div> */}
     </>
   );
 };

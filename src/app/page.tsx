@@ -33,7 +33,7 @@ export default function Home() {
           preTitle="Our Pricing"
           title="Choose the Perfect Plan for Your Blogging Needs"
         >
-          Explore NenoPress's flexible pricing options designed to suit bloggers of all levels.
+          Explore NenoPress&apos;s flexible pricing options designed to suit bloggers of all levels.
           Start transforming your content creation journey today!
         </SectionTitle>
         <PricingTable />

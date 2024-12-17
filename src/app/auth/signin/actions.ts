@@ -18,8 +18,7 @@ export async function login(prevState: any, formData: FormData) {
 
   const testUser = await prisma.user.findUnique({
     where: {
-        email: formData.get("email") as string
-    },
+        email: formData.get("email")?.toString() || "",}
   });
 
   if (!testUser) {
@@ -47,7 +46,7 @@ export async function login(prevState: any, formData: FormData) {
     };
   }
 
-  await createSession(testUser.id);
+  await createSession(testUser.id.toString());
 
   redirect("/billing");
 }
