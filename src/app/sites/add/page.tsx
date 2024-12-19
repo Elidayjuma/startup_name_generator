@@ -1,7 +1,6 @@
 "use client"
 import React, { useState, useEffect } from "react";
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
-import Image from "next/image";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import Modal from "@/components/Modals/BillingModal";
 import { createSite, returnUserSubscription } from "@/actions/actions";

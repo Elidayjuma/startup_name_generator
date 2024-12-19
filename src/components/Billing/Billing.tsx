@@ -11,14 +11,7 @@ interface BillingProps {
 }
 
 const Billing: React.FC<BillingProps> = ({ subscription, usage_Data }) => {
-  if (!subscription) {
-    return (
-      <>
-        Pick a subscription plan to get started.
-        <PricingTable subscription={subscription} />
-      </>
-    )
-  }
+
   const [promptsUsages, setPromptsUsages] = useState<any[]>([]); // Replace `any[]` with the appropriate type
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
@@ -38,6 +31,16 @@ const Billing: React.FC<BillingProps> = ({ subscription, usage_Data }) => {
 
     fetchPromptUsage();
   }, [usage_Data]);
+
+  if (!subscription) {
+    return (
+      <>
+        Pick a subscription plan to get started.
+        <PricingTable subscription={subscription} />
+      </>
+    )
+  }
+
   return (
     <>
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6 xl:grid-cols-4 2xl:gap-7.5">

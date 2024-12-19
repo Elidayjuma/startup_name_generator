@@ -1,5 +1,5 @@
 import { returnUserPrompts } from "@/actions/actions";
-const prompts = await returnUserPrompts()
+const prompts = await returnUserPrompts();
 const cancellValue: number = 2;
 const publishValue: number = 1;
 
