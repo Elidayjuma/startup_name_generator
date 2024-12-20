@@ -1,9 +1,9 @@
 import Image from "next/image";
 import { returnUserSites } from "@/actions/actions";
 
-const sites = await returnUserSites()
 
-const TableTwo = () => {
+const TableTwo = async () => {
+    const sites = await returnUserSites()
     return (
         <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
             <div className="px-4 py-6 md:px-6 xl:px-7.5">

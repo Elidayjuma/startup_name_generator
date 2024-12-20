@@ -14,7 +14,7 @@ const Sites = () => {
     <DefaultLayout>
       <Breadcrumb pageName="My Sites" />
       <div className="flex flex-col gap-10">
-        {/* <MySites /> */}
+        <MySites />
       </div>
     </DefaultLayout>
   );

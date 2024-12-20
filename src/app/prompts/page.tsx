@@ -14,7 +14,7 @@ const Prompts = () => {
         <DefaultLayout>
             <Breadcrumb pageName="My Prompts" />
             <div className="flex flex-col gap-10">
-                {/* <MyPrompts /> */}
+                <MyPrompts />
             </div>
         </DefaultLayout>
     );
