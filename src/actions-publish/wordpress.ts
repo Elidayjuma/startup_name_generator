@@ -29,7 +29,7 @@ export const WORDPRESS_SYNTHESIZE_BLOG = async (data: PromptData) => {
     let featuredImageId = null;
 
     // Generate and upload image if enabled
-    if (data.image_status == 1) {
+    if (data.image_status === 1) {
       const imageUrl = await generateImage(prompt);
       featuredImageId = await uploadImageToWordPress(imageUrl, site);
     }
@@ -159,8 +159,8 @@ async function publishToWordPress(title: string, content: string, site: any, dat
     title: title,
     content: content,
     status: "draft", // Publish immediately
-    categories: [parseInt(data.category_id)],
-    tags: [parseInt(data.tag_id)],
+    categories: data.category_id? [parseInt(data.category_id)] : null,
+    tags: data.tag_id? [parseInt(data.tag_id)] : null,
     ...(featuredImageId && { featured_media: featuredImageId }),
   };
 

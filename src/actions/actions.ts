@@ -44,10 +44,11 @@ export async function createSite(formData: FormData) {
     const user = await session_data();
     let site_logo = formData.get("site_logo") as string
     let site_favicon = formData.get("site_favicon") as string
-
+    
     if (!user?.userId) {
         throw new Error("User ID is required to create a site.");
     }
+    const userId = parseInt(user.userId as string, 10);
 
     await prisma.site.create({
         data: {
@@ -58,7 +59,7 @@ export async function createSite(formData: FormData) {
             site_bio: formData.get("site_bio") as string,
             site_logo: site_logo ? site_logo : "n/a", 
             site_favicon:  site_favicon ? site_favicon : "n/a", 
-            userId: user.userId as number
+            userId: userId
          }
     });
     revalidatePath('/sites')
@@ -67,10 +68,10 @@ export async function createSite(formData: FormData) {
 
 export async function returnUserSites () {
         const user  = await session_data();
-    
+        const userId = user?.userId ? parseInt(user.userId as string, 10) : undefined;
     const sites = await prisma.site.findMany({
         where: {
-            userId: user?.userId as number | undefined
+            userId: userId
         }
     })
     return sites
@@ -87,6 +88,7 @@ export async function returnSingleSite (id: number) {
 
 export async function createPrompt(formData: FormData) {
      const user = await session_data();
+     const userId = user?.userId ? parseInt(user.userId as string, 10) : undefined;
      type PromptData = {
         prompt: string;
         id: number;
@@ -119,7 +121,7 @@ export async function createPrompt(formData: FormData) {
                 connect: { id: parseInt(formData.get("siteId") as string) }, // Connect to an existing Site
               },
               User: {
-                  connect: { id: user?.userId as number | undefined }, // Connect to an existing User
+                  connect: { id: userId }, // Connect to an existing User
 
               }
         }        
@@ -127,7 +129,7 @@ export async function createPrompt(formData: FormData) {
     data.prompt_id = prompt.id;
     const activeSubscription = await returnUserSubscription()
     data.subscriptionId = activeSubscription?.id
-    data.userId = user?.userId as number | undefined;
+    data.userId = user?.userId ? parseInt(user.userId as string, 10) : undefined;;
 
     await createPromptUsage(data)
 
@@ -179,10 +181,10 @@ return promptsUsage
 
 export async function returnUserPrompts () {
     const user  = await session_data();
-
+    const userId = user?.userId ? parseInt(user.userId as string, 10) : undefined;
 const prompts = await prisma.prompts.findMany({
     where: {
-        userId: user?.userId as number | undefined
+        userId: userId
     }, 
     include: {
         Site: true,
@@ -194,6 +196,13 @@ return prompts
 
 export async function createUserSubscription (subscriptionData: any) {
     const user = await session_data();
+    let userId;
+    if(user) {
+         userId = parseInt(user.userId as string, 10);
+    } else {
+        return
+    }
+    
     const promptPackageFeature = await prisma.packageFeatures.findFirst({
         where: {
             name: "Prompts"
@@ -216,7 +225,7 @@ export async function createUserSubscription (subscriptionData: any) {
             startDate: new Date(),
             endDate: new Date(new Date().getTime() + 30 * 24 * 60 * 60 * 1000),
             User: {
-                connect: { id: user?.userId as number | undefined }, // Connect to an existing User
+                connect: {id: userId} // Connect to an existing User
 
             },
             SubscriptionPackages: {
@@ -238,9 +247,12 @@ export async function createUserSubscription (subscriptionData: any) {
 export async function returnUserSubscription () {
 
     const user  = await session_data();
+
+    const userId = user?.userId ? parseInt(user.userId as string, 10) : undefined;
+    
     const subscription = await prisma.subscriptions.findFirst({
         where: {
-            userId: user?.userId as number | undefined
+            userId: userId
         }
         
     })
@@ -260,8 +272,7 @@ export async function getWordpressSiteCategories (site: Site) {
     };
 
     const response = await axios.get(wordpressUrl, { auth });
-    console.log(response)
-    const categories= response.data;
+    const categories= response;
     return categories;
 }
 

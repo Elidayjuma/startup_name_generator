@@ -68,7 +68,7 @@ const SelectWpTags: React.FC<{ onTagSelect: (tagId: string) => void, siteId: str
                     <option value="" disabled className="text-body dark:text-bodydark">
                         Select tag
                     </option>
-                    {tags.map((tag, index) => {
+                    {tags?.map((tag, index) => {
                         return (
                             <option key={index} value={tag.id} className="text-body dark:text-bodydark">
                                 {tag.name}
