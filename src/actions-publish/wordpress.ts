@@ -58,7 +58,7 @@ async function generatePostContent(prompt: string) {
   try {
     // Generate title
     const titleResponse = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
+      model: "gpt-4o",
       messages: [
         {
           role: "user",
@@ -69,13 +69,39 @@ async function generatePostContent(prompt: string) {
     });
     const title = titleResponse.choices[0].message?.content;
 
-    // Generate content
-    const contentResponse = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
+    //Generate blog outline
+    const blogOutlineResponse = await openai.chat.completions.create({
+      model: "gpt-4o",
       messages: [
         {
           role: "user",
-          content: `Write a detailed post about: ${prompt}`,
+          content: `Generate blog outline for a post about: ${prompt}`,
+        },
+      ],
+      max_tokens: 100,
+    });
+    const blogOutline = blogOutlineResponse.choices[0].message?.content;
+
+    // Generate content
+    const contentResponse = await openai.chat.completions.create({
+      model: "gpt-4o",
+      messages: [
+        {
+          role: "user",
+          content: `Write a detailed, SEO-optimized blog post with the title: ${title}.
+
+              Guidelines:
+              The post must be at least 1500 words and structured to increase its likelihood of being featured as a snippet in search results.
+              Use short sentences and simple language to make the content easily scannable.
+              Ensure each section has a minimum of 200 words, providing in-depth and relevant information.
+              Incorporate target keywords strategically throughout the blog for SEO optimization.
+              Use subheadings (H2 and H3 tags) that are keyword-rich and directly related to the topic.
+              Include a summary or conclusion that answers the primary search query concisely, increasing snippet potential.
+              Use bullet points, lists, and tables where relevant to enhance readability and snippet value.
+              Blog Outline:
+              ${blogOutline}
+
+              Create engaging and actionable content that aligns with the outlined structure and adheres to SEO best practices.`,
         },
       ],
       max_tokens: 5000,

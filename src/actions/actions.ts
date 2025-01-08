@@ -272,7 +272,7 @@ export async function getWordpressSiteCategories (site: Site) {
     };
 
     const response = await axios.get(wordpressUrl, { auth });
-    const categories= response;
+    const categories= response.data;
     return categories;
 }
 
