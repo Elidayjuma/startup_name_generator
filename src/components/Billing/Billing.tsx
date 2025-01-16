@@ -8,9 +8,10 @@ import { returnUserPromptUsage } from "@/actions/actions";
 interface BillingProps {
   subscription: any; // Replace `any` with the specific type of `subscription`
   usage_Data: any; // Replace `any` with the specific type of `usage_Data`
+  user: any;
 }
 
-const Billing: React.FC<BillingProps> = ({ subscription, usage_Data }) => {
+const Billing: React.FC<BillingProps> = ({ subscription, usage_Data, user }) => {
 
   const [promptsUsages, setPromptsUsages] = useState<any[]>([]); // Replace `any[]` with the appropriate type
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -36,7 +37,7 @@ const Billing: React.FC<BillingProps> = ({ subscription, usage_Data }) => {
     return (
       <>
         Pick a subscription plan to get started.
-        <PricingTable subscription={subscription} />
+        <PricingTable subscription={subscription} user={user} />
       </>
     )
   }
@@ -87,7 +88,7 @@ const Billing: React.FC<BillingProps> = ({ subscription, usage_Data }) => {
           </svg>
         </CardDataStats>
       </div>
-      <PricingTable subscription={subscription} />
+      <PricingTable subscription={subscription} user={user} />``
     </>
   );
 };

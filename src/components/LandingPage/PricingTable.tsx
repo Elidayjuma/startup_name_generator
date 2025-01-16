@@ -1,12 +1,11 @@
 "use client";
 import { useState } from "react";
-import { redirect } from "next/navigation";
-import { Container } from "@/components/LandingPage/Container";
-import { createUserSubscription, returnLogedIUser } from "@/actions/actions";
-import { usePaystackPayment } from 'react-paystack';
+import { Container } from "@/components/LandingPage/Container";;
+import ConfirmBillModal from "@/components/Modals/ConfirmBillModal";
 
 interface PricingTableProps {
     subscription?: any; // Replace `any` with the specific type of `subscription`
+    user?: any;
 }
 
 const plans = [
@@ -60,46 +59,24 @@ const plans = [
     },
 ];
 
-const PricingTable: React.FC<PricingTableProps> = ({ subscription }) => {
+const PricingTable: React.FC<PricingTableProps> = ({ subscription, user }) => {
 
     const [loadingPlanId, setLoadingPlanId] = useState<number | null>(null);
     const [selectPlan, setSelectPlan] = useState<any>(null); // Track which plan is loading
-    // you can call this function anything
-    const onSuccess = (reference: any) => {
-        // Implementation for whatever you want to do with reference and after success call.
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
-        createUserSubscription({ planData: selectPlan });
-    };
 
-    // you can call this function anything
-    const onClose = () => {
-        // implementation for  whatever you want to do when the Paystack dialog closed.
-        console.log('closed')
-
-    }
 
     const handleButtonClick = async (plan: any) => {
-
         try {
+            setSelectPlan(plan);
+            setIsModalOpen(!isModalOpen)
             setLoadingPlanId(plan.id); // Set the loading state for the clicked plan
-            setSelectPlan(plan)
-            const logedUser = await returnLogedIUser();
-            if (logedUser === undefined) {
+            // const logedUser = await returnLogedIUser();
+            if (user === undefined) {
                 alert("Signin/Signup to subscribe")
                 return
-
             }
-            const config = {
-                reference: (new Date()).getTime().toString(),
-                email: logedUser?.email,
-                amount: plan.paystackPrice, //Amount is in the country's lowest currency. E.g Kobo, so 20000 kobo = N200
-                publicKey: "pk_test_4d73290887e91f8cba2337cd11986fbea0328a4c",
-                currency: "KES",
-                plan: plan.paystackPlanId
-            };
-            const initializePayment = usePaystackPayment(config);
-            initializePayment({ onSuccess, onClose })
-
 
         } catch (error) {
             console.error("Error creating subscription:", error);
@@ -139,6 +116,7 @@ const PricingTable: React.FC<PricingTableProps> = ({ subscription }) => {
                                         : plan.id === subscription?.packageId
                                             ? "Active Plan"
                                             : "Buy Now"}
+
                                 </button>
                                 :
                                 <button
@@ -154,10 +132,16 @@ const PricingTable: React.FC<PricingTableProps> = ({ subscription }) => {
                                             : "Buy Now"}
                                 </button>
                             }
+
                         </div>
                     ))}
                 </div>
             </div>
+            <ConfirmBillModal
+                user={user}
+                plan={selectPlan}
+                open={isModalOpen}
+                setIsModalOpen={(value: boolean) => (setIsModalOpen(value))} />
         </Container>
     );
 };

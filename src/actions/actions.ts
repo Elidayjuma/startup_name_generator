@@ -273,8 +273,8 @@ export async function createUserSubscription (subscriptionData: any) {
 
         },
     });
-    revalidatePath('/billing')
-    redirect("/billing");
+    // revalidatePath('/billing')
+    // redirect("/billing");
 }
 
 export async function returnUserSubscription () {
