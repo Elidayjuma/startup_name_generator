@@ -70,13 +70,13 @@ const PricingTable: React.FC<PricingTableProps> = ({ subscription, user }) => {
     const handleButtonClick = async (plan: any) => {
         try {
             setSelectPlan(plan);
-            setIsModalOpen(!isModalOpen)
             setLoadingPlanId(plan.id); // Set the loading state for the clicked plan
             // const logedUser = await returnLogedIUser();
             if (user === undefined) {
                 alert("Signin/Signup to subscribe")
                 return
             }
+            setIsModalOpen(!isModalOpen)
 
         } catch (error) {
             console.error("Error creating subscription:", error);
