@@ -27,7 +27,6 @@ const AddSite = () => {
   useEffect(() => {
     const fetchSubscription = async () => {
       const data = await returnUserSubscription();
-      console.log(data);
       setSubscription(data);
       if (!data) {
         setIsModalOpen(true);

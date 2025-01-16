@@ -19,15 +19,15 @@ const TableTwo = async () => {
                 <div className="col-span-2 hidden items-center sm:flex">
                     <p className="font-medium">URL</p>
                 </div>
-                <div className="col-span-1 flex items-center">
+                <div className="col-span-2 flex items-center">
                     <p className="font-medium">User Name</p>
                 </div>
-                <div className="col-span-1 flex items-center">
+                {/* <div className="col-span-1 flex items-center">
                     <p className="font-medium">Posts Published</p>
                 </div>
                 <div className="col-span-1 flex items-center">
                     <p className="font-medium">Spend</p>
-                </div>
+                </div> */}
             </div>
 
             {sites.map((site, key) => (
@@ -55,17 +55,12 @@ const TableTwo = async () => {
                             {site.site_url}
                         </p>
                     </div>
-                    <div className="col-span-1 flex items-center">
+                    <div className="col-span-2 flex items-center">
                         <p className="text-sm text-black dark:text-white">
                             {site.wp_username}
                         </p>
                     </div>
-                    <div className="col-span-1 flex items-center">
-                        <p className="text-sm text-black dark:text-white">{20}</p>
-                    </div>
-                    <div className="col-span-1 flex items-center">
-                        <p className="text-sm text-meta-3">${4}</p>
-                    </div>
+
                 </div>
             ))}
         </div>

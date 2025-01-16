@@ -29,11 +29,11 @@ const TableThree = async () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {prompts.map((promptItem, key) => (
-                            <tr key={key}>
+                        {prompts.map((promptItem, key) => {
+                            return (< tr key={key} >
                                 <td className="border-b border-[#eee] px-4 py-5 pl-9 dark:border-strokedark xl:pl-11">
                                     <h5 className="font-medium text-black dark:text-white">
-                                        {promptItem.siteId}
+                                        {promptItem.Site.site_name}
                                     </h5>
                                 </td>
                                 <td className="border-b border-[#eee] px-4 py-5 dark:border-strokedark">
@@ -128,12 +128,13 @@ const TableThree = async () => {
                                     </div>
                                 </td>
                             </tr>
-                        ))}
+                            )
+                        })}
                     </tbody>
                 </table>
             </div>
-        </div>
-    );
+        </div >
+    )
 };
 
 export default TableThree;

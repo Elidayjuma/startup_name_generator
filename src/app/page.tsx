@@ -43,10 +43,10 @@ export default function Home() {
           preTitle="See NenoPress in Action"
           title="Discover How NenoPress Can Revolutionize Your Blogging"
         >
-          Watch this demo to learn how NenoPress can help you effortlessly generate and publish content. A video on your landing page boosts conversions by 3%, so make sure you add one like this!
+          Watch this demo to learn how NenoPress can help you effortlessly generate and publish content.
         </SectionTitle>
 
-        <Video videoId="L5toy8KpFBU" />
+        <Video videoId="EEcqtK80nkI" />
 
         <SectionTitle
           id="testimonials"

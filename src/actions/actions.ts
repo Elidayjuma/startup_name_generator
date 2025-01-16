@@ -2,9 +2,10 @@
 
 import prisma from "@/lib/db";
 import { redirect } from "next/navigation";
-import { revalidatePath } from 'next/cache'
+import { revalidatePath } from 'next/cache';
 import { session_data } from "../middleware";
 import {WORDPRESS_SYNTHESIZE_BLOG} from "../actions-publish/wordpress";
+import { GENERATE_TWEETS } from "@/actions-publish/tweets";
 
 const axios = require("axios");
 
@@ -38,6 +39,20 @@ export async function returnSingleUser(email: string) {
         },
     });
     return user;
+}
+export async function returnLogedIUser() {
+    const logeduser = await session_data();
+    if (!logeduser) {
+        return undefined
+    }
+
+    const userId = parseInt(logeduser?.userId as string, 10);
+    const user = await prisma.user.findUnique({
+       where: {
+           id: userId
+       },
+   });
+   return user;
 }
 
 export async function createSite(formData: FormData) {
@@ -85,6 +100,22 @@ export async function returnSingleSite (id: number) {
     });
     return site;
 }
+export async function createTweets(prompt: string) {
+    const user = await session_data();
+    const tweets  = await GENERATE_TWEETS( prompt)
+    type SubscriptionData = {
+        subscriptionId?: number;
+        userId?: number;
+    };
+    const activeSubscription = await returnUserSubscription()
+    let data: SubscriptionData= {
+        subscriptionId :activeSubscription?.id,
+        userId : user?.userId ? parseInt(user.userId as string, 10) : undefined
+    };
+    await createPromptUsage(data)
+    return tweets;
+
+}
 
 export async function createPrompt(formData: FormData) {
      const user = await session_data();
@@ -98,6 +129,7 @@ export async function createPrompt(formData: FormData) {
         prompt_id?: number; // Make this property optional
         subscriptionId?: number;
         userId?: number;
+        research_links?: string;
     };
 
     let data: PromptData = {
@@ -106,6 +138,7 @@ export async function createPrompt(formData: FormData) {
         tag_id: formData.get("tag_ids") as string,
         category_id: formData.get("category_ids") as string,
         image_status: parseInt(formData.get("image_status") as string),
+        research_links: formData.get("research_links") as string,
     };
 
      let status = parseInt(formData.get("status") as string);
@@ -129,7 +162,7 @@ export async function createPrompt(formData: FormData) {
     data.prompt_id = prompt.id;
     const activeSubscription = await returnUserSubscription()
     data.subscriptionId = activeSubscription?.id
-    data.userId = user?.userId ? parseInt(user.userId as string, 10) : undefined;;
+    data.userId = user?.userId ? parseInt(user.userId as string, 10) : undefined;
 
     await createPromptUsage(data)
 
@@ -240,8 +273,8 @@ export async function createUserSubscription (subscriptionData: any) {
 
         },
     });
-    revalidatePath('/sites/add')
-    redirect("/sites/add");
+    revalidatePath('/billing')
+    redirect("/billing");
 }
 
 export async function returnUserSubscription () {
@@ -252,7 +285,8 @@ export async function returnUserSubscription () {
     
     const subscription = await prisma.subscriptions.findFirst({
         where: {
-            userId: userId
+            userId: userId,
+            statusId: 2
         }
         
     })

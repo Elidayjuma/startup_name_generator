@@ -145,6 +145,18 @@ const CreatePrompt = () => {
                                         className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                                     ></textarea>
                                 </div>
+                                <div className="mb-6">
+                                    <label className="mb-3 block text-sm font-medium text-black dark:text-white">
+                                        Research Links(Optional)
+                                    </label>
+                                    <textarea
+                                        rows={6}
+                                        name="research_links"
+                                        placeholder="Type your research links here (if any). Separate each link with a comma. 
+                                         'Example: https://www.example.com, https://www.example2.com'"
+                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                                    ></textarea>
+                                </div>
                                 {loading ? (
                                     <div className="flex justify-center">
                                         <div>Loading...</div>

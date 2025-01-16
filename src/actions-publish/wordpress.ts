@@ -13,7 +13,8 @@ type PromptData = {
     category_id: string,
     tag_id: string,
     image_status: number,
-    prompt_id?: number 
+    prompt_id?: number,
+    research_links?: string, 
 }
 
 // Function to create and publish the post
@@ -22,35 +23,113 @@ export const WORDPRESS_SYNTHESIZE_BLOG = async (data: PromptData) => {
   const site = await returnSingleSite(data.id);
 
   try {
-    // Generate post content using OpenAI
-    const { title, content } = await generatePostContent(prompt);
+     // Process research links
+     let summaries = "";
+     if (data.research_links) {
+       summaries = await processResearchLinks(data.research_links);
+     }
+ 
+     // Append summaries to the prompt
+     const extendedPrompt = summaries
+       ? `${prompt}\n\nHere are research summaries based on provided links:\n${summaries}`
+       : prompt;
+ 
+     // Generate post content using OpenAI
+     const { title, content } = await generatePostContent(extendedPrompt);
 
-    // Initialize featured image ID
-    let featuredImageId = null;
+     // Initialize featured image ID
+     let featuredImageId = null;
+ 
+     // Generate and upload image if enabled
+     if (data.image_status === 1) {
+       const imageUrl = await generateImage(extendedPrompt);
+       featuredImageId = await uploadImageToWordPress(imageUrl, site);
+     }
+ 
+     // Parse and format content
+     const formattedContent = formatContentForWordPress(content);
+ 
+     // Publish the post on WordPress
+     const response = await publishToWordPress(
+       title,
+       formattedContent,
+       site,
+       data,
+       featuredImageId
+     );
+ 
+     let prompt_info = {
+       id: data.prompt_id,
+       image_id: featuredImageId,
+     };
+     await updatePrompt(prompt_info);
+ 
+     return { success: true, title, postUrl: response.link };
+   } catch (error) {
+     console.error("Error during the blog synthesis process:", error);
+     throw error;
+   }
+ };
+ 
 
-    // Generate and upload image if enabled
-    if (data.image_status === 1) {
-      const imageUrl = await generateImage(prompt);
-      featuredImageId = await uploadImageToWordPress(imageUrl, site);
+// Function to process research links
+async function processResearchLinks(researchLinks: string): Promise<string> {
+  const linksArray = researchLinks.split(",").map((link) => link.trim());
+  const summaries = [];
+
+  for (const link of linksArray) {
+    try {
+      // Scrape the content from the link
+      const response = await axios.get(link, {
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+        },
+      });
+      const htmlContent = response.data;
+
+      // Break content into chunks if necessary
+      const chunks = chunkText(htmlContent, 5000); // Adjust chunk size based on token limit
+      const chunkSummaries = await summarizeChunks(chunks);
+
+      // Combine chunk summaries into a single summary for the link
+      summaries.push(`- **${link}**: ${chunkSummaries.join(' ')}`);
+    } catch (error) {
+      console.error(`Failed to process link: ${link}`, error);
+      summaries.push(`- **${link}**: Failed to retrieve content or summarize.`);
     }
-
-    // Parse and format content
-    const formattedContent = formatContentForWordPress(content);
-
-    // Publish the post on WordPress
-    const response = await publishToWordPress(title, formattedContent, site, data, featuredImageId);
-    
-    let prompt_info = {
-      id: data.prompt_id,
-      image_id: featuredImageId
-    }
-    await updatePrompt(prompt_info)
-
-    return { success: true, title, postUrl: response.link };
-  } catch (error) {
-    console.error("Error during the blog synthesis process:", error);
-    throw error;
   }
+
+  return summaries.join("\n");
+}
+
+const chunkText = (text: string, chunkSize: number) => {
+  const maxChunks = 2
+  const chunks = [];
+  for (let i = 0; i < text.length && chunks.length < maxChunks; i += chunkSize) {
+    chunks.push(text.slice(i, i + chunkSize));
+  }
+  return chunks;
+};
+
+const summarizeChunks = async (chunks: string[]) => {
+  const summaries = [];
+  for (const chunk of chunks) {
+    try {
+      const summaryResponse = await openai.chat.completions.create({
+        model: "gpt-4o-mini",
+        messages: [
+          { role: "user", content: `Summarize the following content for a blog post:\n\n${chunk}` }
+        ],
+        max_tokens: 500,
+      });
+      const summary = summaryResponse.choices[0].message?.content;
+      summaries.push(summary);
+    } catch (error) {
+      console.error("Error summarizing chunk:", error);
+      summaries.push("Error summarizing this portion of the text.");
+    }
+  }
+  return summaries;
 };
 
 // Function to generate title and content using OpenAI
