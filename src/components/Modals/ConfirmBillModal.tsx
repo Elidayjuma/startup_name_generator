@@ -36,7 +36,7 @@ const Modal = ({ open, setIsModalOpen, plan, user }: ModalProps) => {
         reference: (new Date()).getTime().toString(),
         email: user?.email,
         amount: plan?.paystackPrice, // Will be set later based on the plan
-        publicKey: "pk_test_4d73290887e91f8cba2337cd11986fbea0328a4c",
+        publicKey: process.env.NEXT_PUBLIC_PAYSTACK_PUB_KEY || 'default_public_key',
         currency: "KES",
         plan: plan?.paystackPlanId
     };
