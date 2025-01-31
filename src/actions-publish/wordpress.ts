@@ -137,7 +137,7 @@ async function generatePostContent(prompt: string) {
   try {
     // Generate title
     const titleResponse = await openai.chat.completions.create({
-      model: "gpt-4o",
+      model: "gpt-4o-mini",
       messages: [
         {
           role: "user",
@@ -150,7 +150,7 @@ async function generatePostContent(prompt: string) {
 
     //Generate blog outline
     const blogOutlineResponse = await openai.chat.completions.create({
-      model: "gpt-4o",
+      model: "gpt-4o-mini",
       messages: [
         {
           role: "user",
@@ -163,7 +163,7 @@ async function generatePostContent(prompt: string) {
 
     // Generate content
     const contentResponse = await openai.chat.completions.create({
-      model: "gpt-4o",
+      model: "gpt-4o-mini",
       messages: [
         {
           role: "user",

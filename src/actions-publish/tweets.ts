@@ -21,7 +21,7 @@ export const GENERATE_TWEETS = async (prompt: string) => {
   try {
     // Generate tweets using OpenAI
     const response = await openai.chat.completions.create({
-      model: "gpt-4",
+      model: "gpt-4o-mini",
       messages: [
         {
           role: "user",
