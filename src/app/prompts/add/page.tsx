@@ -7,6 +7,7 @@ import SelectWpCategories from "@/components/SelectGroup/SelectWpCategories";
 import SelectWpTags from "@/components/SelectGroup/SelectWpTags";
 import SwitcherThree from "@/components/Switchers/selectPublish";
 import SwitcherImage from "@/components/Switchers/selectImageStatus";
+import SwitcherResearch from "@/components/Switchers/SwitcherResearch";
 import Modal from "@/components/Modals/BillingModal";
 import { createPrompt, returnUserSubscription } from "@/actions/actions";
 import { redirect } from "next/navigation";
@@ -28,6 +29,7 @@ const CreatePrompt = () => {
     const [tagId, setTagId] = useState<string>("");
     const [statusId, setStatusId] = useState<string>("0");
     const [imageStatusId, setImageStatusId] = useState<string>("0");
+    const [researchStatusId, setResearchStatusId] = useState<string>("0");
     const [loading, setLoading] = useState<boolean>(false);
     const [subscription, setSubscription] = useState<Subscription | null>(null);
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -95,31 +97,6 @@ const CreatePrompt = () => {
                                     <SelectWpTags onTagSelect={(tagId) => setTagId(tagId)} siteId={siteId} />
                                     <input type="hidden" name="tag_ids" value={tagId} />
                                 </div>
-                                {/* <div className="mb-4.5 flex flex-col gap-6 xl:flex-row">
-                                    <div className="w-full xl:w-1/2">
-                                        <label className="mb-3 block text-sm font-medium text-black dark:text-white">
-                                            Categories (ids)
-                                        </label>
-                                        <input
-                                            type="text"
-                                            name="category_ids"
-                                            placeholder="Enter category ids separated with a comma"
-                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                                        />
-                                    </div>
-
-                                    <div className="w-full xl:w-1/2">
-                                        <label className="mb-3 block text-sm font-medium text-black dark:text-white">
-                                            Tags (ids)
-                                        </label>
-                                        <input
-                                            type="text"
-                                            name="tag_ids"
-                                            placeholder="Enter tag ids separated with a comma"
-                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                                        />
-                                    </div>
-                                </div> */}
                                 <div className="mb-4.5 flex flex-col gap-6 xl:flex-row">
                                     <div className="w-full xl:w-1/2">
                                         <label className="mb-3 block text-sm font-medium text-black dark:text-white">
@@ -131,6 +108,18 @@ const CreatePrompt = () => {
                                             }
                                         />
                                         <input type="hidden" name="image_status" value={imageStatusId} />
+                                    </div>
+
+                                    <div className="w-full xl:w-1/2">
+                                        <label className="mb-3 block text-sm font-medium text-black dark:text-white">
+                                            Include Research (BETA)
+                                        </label>
+                                        <SwitcherResearch
+                                            onResearchOptionSelect={(researchStatusId: string) =>
+                                                setResearchStatusId(researchStatusId)
+                                            }
+                                        />
+                                        <input type="hidden" name="research_option" value={researchStatusId} />
                                     </div>
                                 </div>
 

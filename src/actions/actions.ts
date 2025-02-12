@@ -5,6 +5,8 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from 'next/cache';
 import { session_data } from "../middleware";
 import {WORDPRESS_SYNTHESIZE_BLOG} from "../actions-publish/wordpress";
+import {WORDPRESS_SYNTHESIZE_BLOG_WITH_AGENTS} from "../actions-publish/wordpress_agentic";
+import {WORDPRESS_SYNTHESIZE_BLOG_WITH_RESEARCH} from "../actions-publish/wordpress_new";
 import { GENERATE_TWEETS } from "@/actions-publish/tweets";
 
 const axios = require("axios");
@@ -126,6 +128,7 @@ export async function createPrompt(formData: FormData) {
         tag_id: string;
         category_id: string;
         image_status: number;
+        research_option: number;
         prompt_id?: number; // Make this property optional
         subscriptionId?: number;
         userId?: number;
@@ -139,6 +142,7 @@ export async function createPrompt(formData: FormData) {
         category_id: formData.get("category_ids") as string,
         image_status: parseInt(formData.get("image_status") as string),
         research_links: formData.get("research_links") as string,
+        research_option : parseInt(formData.get("research_option") as string),
     };
 
      let status = parseInt(formData.get("status") as string);
@@ -166,7 +170,7 @@ export async function createPrompt(formData: FormData) {
 
     await createPromptUsage(data)
 
-    status == 1 ? await WORDPRESS_SYNTHESIZE_BLOG(data): null;
+    status == 1 ? await WORDPRESS_SYNTHESIZE_BLOG_WITH_AGENTS(data): null;
     revalidatePath('/prompts')
     redirect("/prompts");
 
