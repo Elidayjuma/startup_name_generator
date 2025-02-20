@@ -8,6 +8,7 @@ import {WORDPRESS_SYNTHESIZE_BLOG} from "../actions-publish/wordpress";
 import {WORDPRESS_SYNTHESIZE_BLOG_WITH_AGENTS} from "../actions-publish/wordpress_agentic";
 import {WORDPRESS_SYNTHESIZE_BLOG_WITH_RESEARCH} from "../actions-publish/wordpress_new";
 import { GENERATE_TWEETS } from "@/actions-publish/tweets";
+import {GENERATE_POST} from "@/actions-publish/post";
 
 const axios = require("axios");
 
@@ -83,6 +84,148 @@ export async function createSite(formData: FormData) {
     redirect("/sites");
 }
 
+export async function createLinkedInToken(data: any) {
+    const user = await session_data();
+    
+    if (!user?.userId) {
+        throw new Error("User ID is required to create a token record.");
+    }
+    const userId = parseInt(user.userId as string, 10);
+
+    const linkedInToken = await prisma.linkedInTokens.upsert({
+        where: { userId: userId }, // Ensure userId is unique in your schema
+        update: {
+            access_token: data.access_token as string,
+            scope: data.scope as string,
+            id_token: data.id_token as string,
+            refresh_token: data.refresh_token as string,
+            expiry: data.expires_in as Date,
+            token_type: data.token_type as string, 
+        },
+        create: {
+            userId: userId,
+            access_token: data.access_token as string,
+            scope: data.scope as string,
+            id_token: data.id_token as string,
+            refresh_token: data.refresh_token as string,
+            expiry: data.expires_in as Date,
+            token_type: data.token_type as string, 
+        },
+    });
+    
+    return linkedInToken
+}
+
+export async function createLinkedinUser(data: any) {
+    const user = await session_data();
+    
+    if (!user?.userId) {
+        throw new Error("User ID is required to create a linkedin user profile.");
+    }
+    const userId = parseInt(user.userId as string, 10);
+    
+ await prisma.linkedInProfiles.upsert({
+        where: { linkedin_id: data.sub as string },
+        update: {
+            name: data.name as string,
+            given_name: data.given_name as string,
+            family_name: data.family_name as string,
+            picture: data.picture as string,
+            locale: data.locale.country as string,
+            email: data.email as string,
+            email_verified: data.email_verified as boolean,
+            userId: userId
+        },
+        create: {
+            linkedin_id: data.sub as string,
+            name: data.name as string,
+            given_name: data.given_name as string,
+            family_name: data.family_name as string,
+            picture: data.picture as string,
+            locale: data.locale.country as string,
+            email: data.email as string,
+            email_verified: data.email_verified as boolean,
+            userId: userId
+        }
+    });
+}
+
+
+export async function returnLinkedInToken() {
+    const logeduser = await session_data();
+    if (!logeduser) {
+        return undefined
+    }
+
+    const userId = parseInt(logeduser?.userId as string, 10);
+    const linkedInToken = await prisma.linkedInTokens.findUnique({
+       where: {
+           userId: userId
+       },
+   });
+   return linkedInToken;
+}
+
+export async function returnLinkedInUser() {
+    const logeduser = await session_data();
+    if (!logeduser) {
+        return undefined
+    }
+
+    const userId = parseInt(logeduser?.userId as string, 10);
+    const linkedInUser = await prisma.linkedInProfiles.findUnique({
+       where: {
+           userId: userId
+       },
+   });
+   return linkedInUser;
+}
+
+export async function shareOnLinkedIn(accessToken: string, personUrn: string, postText: string) {
+    const url = "https://api.linkedin.com/v2/ugcPosts";
+    const personID = `urn:li:person:${personUrn}`;
+
+    const requestBody = {
+        author: personID,
+        lifecycleState: "PUBLISHED",
+        specificContent: {
+            "com.linkedin.ugc.ShareContent": {
+                shareCommentary: {
+                    text: postText,
+                },
+                shareMediaCategory: "NONE",
+            },
+        },
+        visibility: {
+            "com.linkedin.ugc.MemberNetworkVisibility": "PUBLIC",
+        },
+    };
+
+    try {
+        console.log("posting to linkedin...")
+        const response = await fetch(url, {
+            method: "POST",
+            headers: {
+                "Authorization": `Bearer ${accessToken}`,
+                "Content-Type": "application/json",
+                "X-Restli-Protocol-Version": "2.0.0",
+            },
+            body: JSON.stringify(requestBody),
+        });
+
+        if (response.ok) {
+            console.log("Post shared successfully on LinkedIn!");
+            return response.json();
+        } else {
+            const error = await response.json();
+            console.error("Failed to share post:", error);
+        }
+    } catch (error) {
+        console.error("Error sharing post:", error);
+    }
+};
+
+
 export async function returnUserSites () {
         const user  = await session_data();
         const userId = user?.userId ? parseInt(user.userId as string, 10) : undefined;
@@ -116,6 +259,23 @@ export async function createTweets(prompt: string) {
     };
     await createPromptUsage(data)
     return tweets;
+
+}
+
+export async function createPost(prompt: string) {
+    const user = await session_data();
+    const post  = await GENERATE_POST( prompt)
+    type SubscriptionData = {
+        subscriptionId?: number;
+        userId?: number;
+    };
+    const activeSubscription = await returnUserSubscription()
+    let data: SubscriptionData= {
+        subscriptionId :activeSubscription?.id,
+        userId : user?.userId ? parseInt(user.userId as string, 10) : undefined
+    };
+    await createPromptUsage(data)
+    return post;
 
 }
 

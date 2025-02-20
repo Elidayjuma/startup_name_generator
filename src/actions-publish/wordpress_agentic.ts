@@ -39,11 +39,9 @@ export const WORDPRESS_SYNTHESIZE_BLOG_WITH_AGENTS = async (data: PromptData) =>
         if (data.research_option === 1) {
 
             const searchablePhrase = await convertToSearchablePhrase(heading);
-            console.log("Searchable Phrase:", searchablePhrase);
             const searchResults = await searchGoogle(searchablePhrase);
             const summaries = await summarizeArticles(searchResults);
             ({ outline, faqs } = await generateBlogOutlineAndFAQs(summaries));
-            console.log("Outline:", outline);
             content = await generateContentForOutline(outline, summaries);
             fullContent = `${content}\n\nFAQs:\n${faqs}`;
 
@@ -55,7 +53,6 @@ export const WORDPRESS_SYNTHESIZE_BLOG_WITH_AGENTS = async (data: PromptData) =>
 
         }
         const review = await postPromptReviewer(heading, fullContent);
-        console.log("Post Review:", review);
 
 if (!review.isAligned || review.seoScore < 70) {
     console.warn("Blog post may need improvements:", review.feedback);

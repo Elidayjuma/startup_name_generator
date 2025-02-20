@@ -27,6 +27,8 @@ model User {
   transactions      Transactions[]
   PromptsUsage      PromptsUsage[]
   ExtraPromptsUsage ExtraPromptsUsage[]
+  LinkedInTokens    LinkedInTokens[]
+  LinkedInProfiles  LinkedInProfiles[]
 
   @@map("users")
 }
@@ -47,6 +49,38 @@ model Site {
   prompts      Prompts[]
 
   @@map("sites")
+}
+
+model LinkedInTokens {
+  id            Int       @id @default(autoincrement())
+  access_token  String?   @db.LongText
+  expiry        DateTime?
+  refresh_token String?   @db.LongText
+  token_type    String?
+  id_token      String?   @db.LongText
+  scope         String?
+  created_at    DateTime  @default(now())
+  updated_at    DateTime  @updatedAt
+  User          User      @relation(fields: [userId], references: [id])
+  userId        Int       @unique
+
+  @@map("linkedin_tokens")
+}
+
+model LinkedInProfiles {
+  id             Int     @id @default(autoincrement())
+  linkedin_id    String  @unique // 'sub' from LinkedIn
+  name           String?
+  given_name     String?
+  family_name    String?
+  picture        String?
+  locale         String?
+  email          String? @unique
+  email_verified Boolean @default(false)
+  userId         Int     @unique
+  User           User    @relation(fields: [userId], references: [id])
+
+  @@map("linkedin_profiles")
 }
 
 model Prompts {

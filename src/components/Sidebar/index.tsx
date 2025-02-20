@@ -7,7 +7,7 @@ import Image from "next/image";
 import SidebarItem from "@/components/Sidebar/SidebarItem";
 import ClickOutside from "@/components/ClickOutside";
 import useLocalStorage from "@/hooks/useLocalStorage";
-import { BanknotesIcon, BookOpenIcon, DocumentDuplicateIcon } from "@heroicons/react/24/solid";
+import { BanknotesIcon, BookOpenIcon, UserCircleIcon } from "@heroicons/react/24/solid";
 
 interface SidebarProps {
   sidebarOpen: boolean;
@@ -25,13 +25,7 @@ const menuGroups = [
         label: "Billing",
         route: "/billing",
       },
-      {
-        icon: (
-          <DocumentDuplicateIcon className="size-6" />
-        ),
-        label: "Twitter",
-        route: "/twitter",
-      },
+
       {
         icon: (
           <svg
@@ -104,6 +98,17 @@ const menuGroups = [
         children: [
           { label: "My Sites", route: "/sites" },
           { label: "Add Site", route: "/sites/add" },
+        ],
+      },
+      {
+        icon: (
+          <UserCircleIcon className="size-6" />
+        ),
+        label: "Socials",
+        route: "#",
+        children: [
+          { label: "LinkedIn", route: "/linkedin" },
+          { label: "Twitter", route: "/twitter" },
         ],
       },
       {

@@ -6,7 +6,6 @@ const openai = new OpenAI({
 });
 
 export async function summarizeArticles(articles: any[]): Promise<string> {
-    console.log("Summarizing articles:");
     const summaries = [];
     for (const article of articles) {
         try {
