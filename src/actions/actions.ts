@@ -8,6 +8,7 @@ import {WORDPRESS_SYNTHESIZE_BLOG} from "../actions-publish/wordpress";
 import {WORDPRESS_SYNTHESIZE_BLOG_WITH_AGENTS} from "../actions-publish/wordpress_agentic";
 import {WORDPRESS_SYNTHESIZE_BLOG_WITH_RESEARCH} from "../actions-publish/wordpress_new";
 import { GENERATE_TWEETS } from "@/actions-publish/tweets";
+import { POST_A_TWEET_3RD_PARTY } from "@/actions-publish/tweets";
 import {GENERATE_POST} from "@/actions-publish/post";
 
 const axios = require("axios");
@@ -150,7 +151,6 @@ export async function createLinkedinUser(data: any) {
     });
 }
 
-
 export async function returnLinkedInToken() {
     const logeduser = await session_data();
     if (!logeduser) {
@@ -180,6 +180,88 @@ export async function returnLinkedInUser() {
    });
    return linkedInUser;
 }
+
+export async function createTwitterToken(data: any) {
+    const user = await session_data();
+    
+    if (!user?.userId) {
+        throw new Error("User ID is required to create a token record.");
+    }
+    const userId = parseInt(user.userId as string, 10);
+
+    const twitterToken = await prisma.twitterTokens.upsert({
+        where: { userId: userId }, // Ensure userId is unique in your schema
+        update: {
+            oauth_token_secret: data.oauth_token_secret as string,
+            oauth_token: data.oauth_token as string,
+            accesstoken: data.access_token as string,
+            accesssecret: data.access_secret as string,
+            refresh_token: data.refresh_token as string,
+            expiry: data.expires_in as Date, 
+        },
+        create: {
+            userId: userId,
+            oauth_token_secret: data.oauth_token_secret as string,
+            oauth_token: data.oauth_token as string,
+            accesstoken: data.access_token as string,
+            accesssecret: data.access_secret as string,
+            refresh_token: data.refresh_token as string,
+            expiry: data.expires_in as Date,  
+        },
+    });
+    
+    return twitterToken
+}
+
+export async function createTwitterUser(data: any) {
+    const user = await session_data();
+    
+    if (!user?.userId) {
+        throw new Error("User ID is required to create a linkedin user profile.");
+    }
+    const userId = parseInt(user.userId as string, 10);
+    
+ await prisma.linkedInProfiles.upsert({
+        where: { linkedin_id: data.sub as string },
+        update: {
+            name: data.name as string,
+            given_name: data.given_name as string,
+            family_name: data.family_name as string,
+            picture: data.picture as string,
+            locale: data.locale.country as string,
+            email: data.email as string,
+            email_verified: data.email_verified as boolean,
+            userId: userId
+        },
+        create: {
+            linkedin_id: data.sub as string,
+            name: data.name as string,
+            given_name: data.given_name as string,
+            family_name: data.family_name as string,
+            picture: data.picture as string,
+            locale: data.locale.country as string,
+            email: data.email as string,
+            email_verified: data.email_verified as boolean,
+            userId: userId
+        }
+    });
+}
+
+export async function returnTwitterToken() {
+    const logeduser = await session_data();
+    if (!logeduser) {
+        return undefined
+    }
+
+    const userId = parseInt(logeduser?.userId as string, 10);
+    const twitterToken = await prisma.twitterTokens.findUnique({
+       where: {
+           userId: userId
+       },
+   });
+   return twitterToken;
+}
+
 
 export async function shareOnLinkedIn(accessToken: string, personUrn: string, postText: string) {
     const url = "https://api.linkedin.com/v2/ugcPosts";
@@ -260,6 +342,11 @@ export async function createTweets(prompt: string) {
     await createPromptUsage(data)
     return tweets;
 
+}
+
+export async function publishTweet(message: string, twitterTokens: any) {
+    const tweet = await POST_A_TWEET_3RD_PARTY(message, twitterTokens);
+    return tweet
 }
 
 export async function createPost(prompt: string) {

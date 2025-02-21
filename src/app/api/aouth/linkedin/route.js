@@ -56,11 +56,7 @@ export async function GET(req) {
     const userInfo = userInfoResponse.data;
     await createLinkedinUser(userInfo);
 
-    // return NextResponse.json({
-    //   token: token_data,
-    //   user: userInfo,
-    // });
-    return NextResponse.redirect("http://localhost:3000/linkedin");
+    return NextResponse.redirect(`${process.env.BASE_URL}/linkedin`);
   } catch (error) {
     return NextResponse.json(
       { error: error.response?.data || "Failed to fetch access token" },

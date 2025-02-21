@@ -2,8 +2,6 @@
 import React, { useState, useEffect } from "react";
 import Modal from "@/components/Modals/BillingModal";
 import { returnUserSubscription, createTweets } from "@/actions/actions";
-import { redirect } from "next/navigation";
-import { revalidatePath } from 'next/cache';
 
 interface CreateTweetsProps {
     onFormSubmit: (tweets: string[]) => void;

@@ -1,10 +1,11 @@
 "use client";
 import React, { useEffect, useState } from "react";
+// import { TwitterApi } from 'twitter-api-v2';
+// const { TwitterApi } = require("twitter-api-v2");
 import { DocumentDuplicateIcon } from "@heroicons/react/24/solid";
-import {
-    TwitterShareButton,
-    TwitterIcon,
-} from 'next-share'
+
+import { returnTwitterToken, publishTweet } from "@/actions/actions";
+
 
 const TweetGrid: React.FC<{ tweets: string[] }> = ({ tweets }) => {
     const [editedTweets, setEditedTweets] = useState<string[]>([]);
@@ -30,9 +31,12 @@ const TweetGrid: React.FC<{ tweets: string[] }> = ({ tweets }) => {
         // Add scheduling logic here
     };
 
-    const handlePublish = (tweet: string) => {
-        alert(`Publishing tweet: ${tweet}`);
+    const handlePublish = async (message: string) => {
+        alert(`Publishing tweet: ${message}`);
         // Add publishing logic here
+        const twitterTokens = await returnTwitterToken();
+        const tweet = await publishTweet(message, twitterTokens);
+
     };
 
     return (
@@ -67,25 +71,13 @@ const TweetGrid: React.FC<{ tweets: string[] }> = ({ tweets }) => {
                             >
                                 Schedule
                             </button>
-                            {/* <button
+                            <button
                                 className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
                                 onClick={() => handlePublish(tweet)}
                             >
                                 Publish
-                            </button> */}
-                            <TwitterShareButton
-                                className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
-                                url={'#'}
-                                title={tweet}
-                            >
-                                <button
-                                    className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
-                                // onClick={() => handlePublish(tweet)}
-                                >
-                                    Publish
-                                    {/* <TwitterIcon size={32} round /> */}
-                                </button>
-                            </TwitterShareButton>
+                            </button>
+
                         </div>
                     </div>
                 )

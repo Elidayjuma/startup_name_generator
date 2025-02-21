@@ -27,6 +27,7 @@ export const GENERATE_TWEETS = async (prompt: string) => {
           role: "user",
           content: `Generate 9 concise tweets based on this prompt: "${prompt}". 
           Each tweet should be engaging, easy to read, and no longer than 280 characters.
+          The tweets MUST not be identical and they should qualify to be published individually.
           Do not number the tweets.
           Don't add quatation marks around each tweet. 
           Separate each tweet clearly.`,
@@ -46,7 +47,7 @@ export const GENERATE_TWEETS = async (prompt: string) => {
   }
 }
 
-//new function to fetch user spenditures
+//new function to 
 export const POST_A_TWEET = async (data: any) => {
     try {
       const twitterClient = new TwitterApi({
@@ -69,6 +70,28 @@ export const POST_A_TWEET = async (data: any) => {
       err,
     };
   }
+};
+
+//new function to publish a tweet using 3rd party accounts
+export const POST_A_TWEET_3RD_PARTY = async (data: any, twitterTokens: any) => {
+  try {
+    const twitterClient = new TwitterApi({
+        appKey: consumer_key,
+        appSecret: consumer_secret,
+        accessToken: twitterTokens.accesstoken,
+        accessSecret: twitterTokens.accesssecret,
+      });
+      
+  const { data: createdTweet } = await twitterClient.v2.tweetThread([data]);
+  
+  return createdTweet;
+} catch (err) {
+  console.log(err);
+  return {
+    status: "failed",
+    err,
+  };
+}
 };
 
 
