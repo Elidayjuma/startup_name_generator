@@ -4,7 +4,7 @@ import { postPromptReviewer } from "@/agents/postPromptReviewer";
 import { generateHeading } from "../agents/headingGenerator";
 import { convertToSearchablePhrase } from "../agents/searchPhraseGenerator";
 import { searchGoogle } from "../agents/googleSearchAgent";
-import { summarizeArticles } from "../agents/articleSummarizerPuppetter";
+import { summarizeArticles } from "../agents/articleSummarizer";
 import { generateBlogOutlineAndFAQs } from "../agents/blogOutlineGenerator";
 import { generateContentForOutline } from "../agents/contentGenerator";
 import { generateImage } from "@/agents/imageGenerator";
