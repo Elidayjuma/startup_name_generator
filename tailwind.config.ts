@@ -21,6 +21,15 @@ const config: Config = {
     },
     extend: {
       colors: {
+        background: "var(--background)",
+        foreground: "var(--foreground)",
+        primary: "var(--primary)",
+        secondary: "var(--secondary)",
+
+        "primary-accent": "var(--primary-accent)",
+        "foreground-accent": "var(--foreground-accent)",
+        "hero-background": "var(--hero-background)",
+        
         current: "currentColor",
         transparent: "transparent",
         white: "#FFFFFF",
@@ -37,8 +46,8 @@ const config: Config = {
         bodydark: "#AEB7C0",
         bodydark1: "#DEE4EE",
         bodydark2: "#8A99AF",
-        primary: "#3C50E0",
-        secondary: "#80CAEE",
+        // primary: "#3C50E0",
+        // secondary: "#80CAEE",
         stroke: "#E2E8F0",
         gray: {
           ...colors.gray,
