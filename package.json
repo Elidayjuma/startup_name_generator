@@ -3,16 +3,10 @@
   "version": "1.3.5",
   "private": true,
   "scripts": {
-    "dev": "prisma generate && next dev",
-    "build": "prisma generate && next build",
+    "dev": "next dev",
+    "build": "next build",
     "start": "next start -p 8415",
-    "lint": "next lint",
-    "migration:create": "prisma migrate dev --create-only",
-    "migrate": "prisma migrate deploy",
-    "seed": "prisma ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"
-  },
-  "prisma": {
-    "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"
+    "lint": "next lint"
   },
   "dependencies": {
     "@headlessui/react": "^2.2.0",
@@ -35,7 +29,6 @@
     "react-dom": "^18",
     "react-hook-form": "^7.53.2",
     "react-icons": "^5.5.0",
-    "react-paystack": "^6.0.0",
     "twitter-api-v2": "^1.20.1",
     "zod": "^3.23.8"
   },
@@ -49,7 +42,6 @@
     "postcss": "^8",
     "prettier": "^3.2.5",
     "prettier-plugin-tailwindcss": "^0.5.11",
-    "prisma": "^5.22.0",
     "tailwindcss": "^3.4.1",
     "ts-node": "^10.9.2",
     "typescript": "^5"
