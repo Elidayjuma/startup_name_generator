@@ -3,7 +3,7 @@
 module.exports = {
   experimental: {
     serverActions: {
-      allowedOrigins: ["nenopress.elidayjuma.com"],
+      allowedOrigins: ["namekon.elidayjuma.com"],
     },
   },
 };
