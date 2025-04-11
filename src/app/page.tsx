@@ -12,7 +12,7 @@ const HomePage: React.FC = () => {
   return (
     <>
       <Head>
-        <script defer data-domain="namekon.elidayjuma.com" src="https://analytics.elidayjuma.com/js/script.js"></script>
+        <script defer data-domain="namekon.elidayjuma.com" src="https://analytics.elidayjuma.com/js/script.js" key="analytix"></script>
       </Head>
       <Header />
       <Hero />
