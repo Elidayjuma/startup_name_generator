@@ -1,4 +1,4 @@
-import Head from "next/head";
+import Script from 'next/script'
 import Hero from "@/components/Hero";
 import FAQ from "@/components/FAQ";
 import Container from "@/components/Container";
@@ -11,9 +11,7 @@ import Footer from "@/components/Footer";
 const HomePage: React.FC = () => {
   return (
     <>
-      <Head>
-        <script defer data-domain="namekon.elidayjuma.com" src="https://analytics.elidayjuma.com/js/script.js" key="analytix"></script>
-      </Head>
+      <Script defer data-domain="namekon.elidayjuma.com" src="https://analytics.elidayjuma.com/js/script.js" />
       <Header />
       <Hero />
       <FeatureCards />
