@@ -39,7 +39,7 @@ export const childVariants = {
         opacity: 1,
         x: 0,
         transition: {
-            type: "spring",
+            type: "spring" as const,
             bounce: 0.2,
             duration: 1,
         }
@@ -60,7 +60,7 @@ const BenefitSection: React.FC<Props> = ({ benefit, imageAtRight }: Props) => {
             >
                 <div
                     className={clsx("flex flex-wrap items-center w-full max-w-lg", { "justify-start": imageAtRight, "lg:order-1 justify-end": !imageAtRight })}
-                    
+
                 >
                     <div className="w-full  text-center lg:text-left ">
                         <motion.div
